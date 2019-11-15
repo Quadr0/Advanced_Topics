@@ -1,0 +1,71 @@
+Introduction to REDACTED
+Technically speaking codes deal with replacing words in a message with other words, numbers, or symbols. Just like spies have codenames to obscure their identity. Similarly, when we are “coding” in python or java, we are simply putting words in a place that will then be translated to a language that the computer can understand. Simply replacing a word or a phrase with another word, phrase, number or symbol would be considered a code. For example, if you and I often want to meet at noon, we could change the phrase Meet me at high noon could to be replaced by the codeword Eagle. This would allow us to reveal to each other our intentions, without enemies knowing when we will meet.
+Alternative to codes, we have ciphers. Ciphers can be more powerful because they act at a lower level. Instead of altering entire phrases or words, ciphers deal with changing the individual letters of a phrase. For example, a very simple cipher, we can replace every letter in a phrase with the next letter in the alphabet. Thus A becomes B, B becomes C, and so on with Z wrapping back to A. So a message like Meet me at high noon would then become Nffu nf bu ijhi oppo. Cryptography relies heavily on ciphers rather than codes. The two terms have become practically interchangeable. I will often say code when I in fact mean cipher. Particularly when referring to cipherbreaking, I will often simply say codebreaking.
+Much of what we will study will first focus on how a certain code or cipher works, how that replaces the codes of the history. After we have grasped the idea of that code or cipher, we will then turn to understanding how to break it. Code and cipher breaking is a arduous process of starting with almost nothing and slowly cracking away at a problem until we can find a solution. Many of the primitive codes and ciphers that we study will be hard to crack by computer, and much more approachable from a human perspective as they often require knowledge of the context and intuition that a computer cannot have. Eventually, however, we will work our way up to modern codes and ciphers which must be cracked by use of a computer. You will notice, however, that often a message can be encoded by use of a computer and an algorithm.
+
+
+Disclaimer: much of this unit is adapted from the book The Code Book by Simon Singh. This is one of my favorite books. While the ciphers and codes that we explore are inspired by the stories from the book, we do not have the time or patience to learn about much of the history surrounding these ciphers and codes. If you are interested I’m happy to loan out my book (once we’ve finished the unit) or I suggest you get your own copy.
+
+
+Secret Communication
+The most primitive of secret communication was simply hiding a message. An extreme example: in Greece, around 480 B.C. there is an instance of a messenger shaving his head, writing a message on his head, waiting until the hair grew back, and then trekking to an ally city, all the while concealing the message on his head with hair. Once he knew the coast was clear and had arrived in the other city, he shaved his head to reveal the message. This process of communication via hidden messages is called steganography from the Greek steganos “covered” and graphein “to write”. This is still a common method of secret communication, think invisible ink. The goal here is to conceal the existence of a message.
+While steganography was developing, cryptography was evolving as well. Cryptography, rather than trying to conceal the existence of a message, attempts to conceal the meaning of a message. This process of obscuring the meaning of a given message is called encryption. Thus a message is scrambled by the sender, and unscrambled by the receiver. Without knowledge of the scrambling process, it is difficult for a third party to intercept and decode the meaning of the message.
+The two can be used in tandem, but clearly the process of cryptography is more interesting to study. Cryptography can be divided into two distinct branches: transposition and substitution.
+
+
+Simple Transposition Ciphers
+Let’s first look at a few transposition approaches to cryptography. Transposition involves rearranging letters in a message to obscure the meaning. With short messages, this is relatively insecure. Take, for example, the word dog. This can be rearranged six ways: dgo, ogd, odg, god, gdo, and the original dog. As we add letters, however, the number of possible combinations soars. For example, consider this short sentence. It contains 35 letters, and yet there are more than 50,000,000,000,000,000,000,000,000,000,000 distinct arrangements of them. “If one person could check one arrangement per second, and if all the people in the world worked night and day, it would still take more than a thousand times the lifetime of the universe to check all the arrangements.” This is all good and fun, but eventually we will come across the need to descramble a message. If we use a random scrambling of the letters, it is practically impossible to quickly and correctly decipher the message. So, we clearly need some sort of system or algorithm for transposition that will allow us to quickly reconstruct the original message. Here’s a simple transposition that you may have seen before: write a message on alternating lines. Then combine line1 before line2, to get the final message.
+
+
+Using this process, what does the ciphertext REDACTED say?
+
+
+Another transposition process uses a wooden staff. You wrap a piece of paper, or anything that can be written on, around the staff. With the paper wrapped around the staff, you write your message across the paper as it is on the staff. Then, when you unravel it, you have a jumbled message. This message can only be read when wrapped around a staff of the same diameter. This is called a scytale.
+
+
+
+
+Simple Substitution Ciphers
+Alternatively to transposition, we have substitution ciphers. Rather than scrambling the letters of a plaintext message, we replace each letter with a previously agreed upon replacement. Take, for example, the normal Roman alphabet. We could randomly assign each letter to another letter. Then, in our message, we would switch every letter for it’s randomly associated letter to encrypt the message. This might look something like this:
+
+So the message Meet me at high noon would become REDACTED.
+Back to our original example, where we used a shift of one on all letters in the alphabet, looping back when we got to Z. We can repeat this, using a shift of size n where n is between 1 and 25. This takes our plain text “message” and encrypts is using what is called a key. The encrypted message is referred to as the ciphertext and the original message is the plaintext. In this case, the key would be the alphabet in its shifted form. This is called the Caesar shift cipher.
+
+
+The general encryption and decryption process follows this formula:
+REDACTED
+
+
+The Caesar shift is nice, but relatively easy to break. This is because there are only 25 possible keys. In fact, let’s write a program to implement a Caesar shift now, and then figure out how we could break the cipher use another program.
+
+
+
+
+With a partner:
+1. Write a function in Python that will take a plaintext message (string) and a value of n (int), where n specifies the number of the Caesar shift and returns the encrypted message.
+2. Write a function that takes an encrypted message, and a value of n and decrypts that message.
+3. Write another function in Python that takes an encrypted Caesar shifted message and attempts to break the cipher. You may print out all possible options and then select the true message by hand.
+   1. Adapt your function so that it uses the d.txt dictionary that I gave you in lab 2 to find the one true original message.
+      1. This will involve reading files, counting occurences of real words, and maybe a little probability!
+
+
+There is a generalized version of the Caesar shift cipher that is much more secure, where the cipher alphabet is not in the same order as the original alphabet. So essentially we scramble the alphabet, and then assign the first letter in that scrambling to A, the second to B, and so on. This will give us 400,000,000,000,000,000,000,000,000 possible keys. Wow! This is an incredibly easy to implement cipher, and incredibly hard to break cipher.
+To simplify things a bit, we can use a keyword or keyphrase. This allows us to determine the order of the mixed alphabet much easier than if we just scrambled the alphabet randomly. We can generate a keyphrase by removing spaces from it, and removing repeated letters. So for example, we could use REDACTED as a keyphrase/keyword, and then REDACTED becomes the beginnings of our scrambled alphabet, then we continue the rest of the alphabet in the normal order, filling in the remaining letters that we haven’t yet used. This would give:
+
+
+REDACTED
+
+
+This is monumentally easier for the sender and the receiver to do because it simply involves memorizing the keyword or keyphrase, and the rest is automatic. Thus the “key,” in this case the cipher alphabet, can be committed to memory by the parties that intend to encrypt and decrypt information, and thus cannot be accidentally lost or stolen.
+For a long time this was considered unbreakable, given the large number of possible keywords or keyphrases. However, a shortcut was found that could reveal the original message quickly, without testing all possible keyphrases. Arab scholars, the inventors of cryptanalysis, succeeded in finding a method for breaking the monoalphabetic substitution cipher—the general name given to any substitution cipher in which the cipher alphabet consists of either letters or symbols, or a mix of both.
+The key to breaking a monoalphabetic substitution cipher hinges on knowledge of letter frequency in the language in which the message is written. Knowing this, we can assign the most common letter in the ciphertext to the most common letter in the language, the second most frequent letter in the ciphertext to the second most frequent letter in the language, and so on. This process is called frequency analysis.
+
+
+Frequency Analysis
+We can find the frequency of letters in the english language, by analyzing a piece of text, or multiple pieces of text. We can also find it by going here.
+
+
+Before we start using frequency analysis, let’s adapt our code from before to allow for a keyphrase, rather than a shift, to encrypt the message.
+
+
+Now let’s attempt to use a very naive approach to frequency analysis, and see if we can decrypt an encrypted message.
