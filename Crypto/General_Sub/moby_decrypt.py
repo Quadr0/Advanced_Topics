@@ -1,4 +1,4 @@
-# Daniel Katz and William Carter
+import general_substitution as gs 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 frequency_text = 'nytimes_news_articles.txt'
 cyphered_text = 'moby_dick_secret.txt' 
