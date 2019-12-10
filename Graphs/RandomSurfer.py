@@ -3,13 +3,22 @@ from sys import setrecursionlimit
 
 setrecursionlimit(10**9)
 
+def file_to_set(file_name):
+    with open(file_name, 'r') as file:
+        num_tuples = int(file.readline().strip())
+        all_sets = set()
+        for i in range(num_tuples):
+            tuple_edge = file.readline().strip().split(',')
+            all_sets.add((int(tuple_edge[0]), int(tuple_edge[1])))
+        return all_sets
+
+
 def set_to_list(orig_set): 
-    adj_list = [set() for i in range(max(j[0] for j in orig_set) + 1)]
+    adj_list = [set() for i in range(max(max(j[0], j[1]) for j in orig_set) + 1)]
     for i in orig_set:
         a = i[0]
         b = i[1]
         adj_list[a].add(b)
-        adj_list[b].add(a)
     adj_list = [list(i) for i in adj_list]
     return adj_list
 
@@ -25,7 +34,7 @@ def list_to_matrix(adj_list):
 
 def random_surf(adj_list, cur_page, page_counter,  pages_visited):
     page_counter[cur_page] += 1
-    if pages_visited >= 10020:
+    if pages_visited >= 2000:
         return page_counter
     
     link_or_page = randint(1, 100)
@@ -38,11 +47,14 @@ def random_surf(adj_list, cur_page, page_counter,  pages_visited):
         return random_surf(adj_list, cur_page, page_counter, pages_visited+1)
 
 def main():
-    orig_set = {(0,1),(0,2),(1,0),(1,2),(2,0),(2,1),(2,3),(3,2),(3,4),(4,3)}
+    orig_set = {(0,1),(0,2),(2,3),(4,0)}
+    #orig_set = file_to_set('web_graph_1.txt')
     adj_list = set_to_list(orig_set)
+    print(adj_list)
     page_counter = [0 for i in range(len(adj_list))]
     rand_start = randint(0, len(adj_list) - 1) 
-    print(adj_list)
-    print(random_surf(adj_list, rand_start, page_counter, 0))
+    page_counter = random_surf(adj_list, rand_start, page_counter, 0)
+    for i in range(len(page_counter)):
+        print(page_counter[i] / sum(page_counter))
 
 main()
