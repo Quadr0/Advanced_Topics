@@ -123,7 +123,7 @@ def find_path():
                 neighbor.pred = cur_node
 
             elif cur_node.dist + value < neighbor.dist:
-                neighbor.dist == cur_node.dist + value
+                neighbor.dist = cur_node.dist + value
                 neighbor.pred = cur_node
 
 
@@ -170,6 +170,8 @@ def main():
 
     option = '0'
     obstacles = list()
+    board = [[Node(i,j) for j in range(100)] for i in range(100)]
+    init_board()
 
     print('\nThe default value for the start is (0,0) and (99,99) for the end.')
     print('There are no obstacles as a default.')
