@@ -1,12 +1,11 @@
 # Graphics library that allows to easily draw layout of all nodes and obstacles.
 from graphics import *
-
 from math import sqrt
 from random import randint
 
 # Node class that stores values about its x position(j), y position(i),
 # neighboring nodes(con_list), predecessor node(pred), 
-# and distance from the start node(dist).
+# and distance from the start node(dist)
 class Node:
     def __init__(self, i, j):
         self.i = i
@@ -22,11 +21,11 @@ end_point = [99,99]
 
 # Function that prompts user enter user to the top right, and bottom left corner
 # of an obstacle. The points should be entered in a y,x format. Error
-# checking to make sure the obstacle follows the instructions and does not
+# checking to make sure the obstacle follows that instructions and does not
 # take the place of the start or end point.
 def get_obstacles(obstacles):
     while(True):
-        print('\nIf you are done entering obstacles, enter "stop" for the first prompt.')
+        print('\nIf you are done entering obstacles, enter "stop" for the first prompt')
         point1 = input('Enter the top right corner of the obstacle in the format "y,x": ')
         point1 = point1.strip().lower().replace(" ", "")
         if point1 == 'stop' : break
@@ -191,10 +190,7 @@ def find_path():
 
     return None
 
-# Function that uses the graphics library to display a graphical representation
-# of the board. Each node or part of obstacle is represented as a circle with
-# a different color filling. The key to each color is printed in the console
-# when the graphic pops up.
+# Function that represents the 
 def draw_graph(end_node):
     print('\nThe pink circle is the starting node.')
     print('The purple circle is the ending node.')
@@ -204,15 +200,11 @@ def draw_graph(end_node):
     print('The yellow circles are unused nodes.')
     print('Click on the popup to exit it!!!')
 
-    # Gets a list from the start node to the end node.
     node_list = start_to_end(end_node)
 
-    # Makes a 1000 x 1000 window, and sets the background to white.
     win = GraphWin('Graph', 1000, 1000, autoflush=False)
     win.setBackground('white')
 
-    # Goes through every point in the board and constructs a circle with
-    # the approriate color filling.
     for i in range(len(board)):
         for j in range(len(board[i])):
             if board[i][j] == None:
@@ -234,12 +226,9 @@ def draw_graph(end_node):
             circle.setFill(cur_color)
             circle.draw(win)
 
-    # Waits for the mouse to be pressed and then closes the window.
     win.getMouse()
     win.close()
 
-# Uses the pred field of the Node class to construct a list from the
-# starting node to the end node.
 def start_to_end(end_node):
     li = [end_node]
     while end_node.pred is not None:
@@ -250,11 +239,7 @@ def start_to_end(end_node):
 def main():
     global board
 
-    # Makes the option variable, which is then used to determine what action
-    # to make, depending on user input.
     option = '0'
-
-    # Does the inital initilization of the board and obstacle list.
     obstacles = list()
     board = [[Node(i,j) for j in range(100)] for i in range(100)]
     init_board()
@@ -263,11 +248,6 @@ def main():
     print('There are no obstacles as a default.')
     print('You can select options from the menu to change the board or display the result.\n')
 
-    # Endlesly loops the option menu, until the user decides to quit the 
-    # program. Keeps prompting the user for what action they want to take from
-    # the option menu. Makes sure the user enters a correct option. Each option
-    # that modifies the board also has to reset it and re-initilize it with the
-    # stored obstacles.
     while True:
         print('\nThe current start point is at ({}, {})'.format(start_point[1],start_point[0]))
         print('The current end point is at ({}, {})'.format(end_point[1],end_point[0]))
