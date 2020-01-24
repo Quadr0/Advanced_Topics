@@ -1,3 +1,5 @@
+# Names: Ben Wiegand and Daniel Katz
+
 import math, random, sys
 
 class centroid():
@@ -8,16 +10,19 @@ class centroid():
         self.points_under_control = dimensions.copy()
 
 
-def k_means(num_clusters, points):
+def k_means(num_clusters, points, point_labels=False):
     starting_dims = random.choices(points, k=num_clusters)
     centroids = [centroid(i, val) for i, val in enumerate(starting_dims)]
 
     while(check_to_stop(centroids)):
         single_iteration(points, centroids)
 
-    for i in centroids:
-        for j in i.points_under_control:
-            print(j, i.label)
+    if point_labels == True:
+        for i in centroids:
+            for j in i.points_under_control:
+                print(j, i.label)
+
+    return centroids
 
 def single_iteration(points, centroids):
     for centroid in centroids: centroid.points_under_control = [centroid.dimensions.copy()]
@@ -40,28 +45,25 @@ def distance(point, centroid):
     out = 0
     for i in range(len(point)):
         out += (point[i] - centroid.dimensions[i]) ** 2
-    out = math.sqrt(out)
-    return out
+    return math.sqrt(out)
 
 
 def check_to_stop(centroids):
-    for i in centroids:
+    for i in centroids: 
         if i.dimensions != i.prev_dimensions: return True
-
     return False
 
 def gen_points(num_clusters):
     out = list()
     for i in range(num_clusters*10):
         i = i // 10
-        out.append([random.randint(i*100, i*100 + 10), random.randint(i*100, i*100 + 10)])
+        out.append([random.randint(i*100, i*100 + 60), random.randint(i*100, i*100 + 60)])
 
     return out
 
 def main():
     num_clusters = 3
     points = gen_points(num_clusters)
-
     k_means(num_clusters, points)
 
 
