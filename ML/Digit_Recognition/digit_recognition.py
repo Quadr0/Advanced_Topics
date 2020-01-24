@@ -2,7 +2,7 @@ import random
 import math
 
 NUM_EPOCHS = 50
-LEARNING_RATE = .01
+LEARNING_RATE = 1
 MIN_INITIAL_WEIGHT = -1
 MAX_INITIAL_WEIGHT = 1
 
@@ -75,6 +75,7 @@ def init_network():
             input_hidden_nodes[i].append(Input_Node())
         bias_node = Input_Node()
         bias_node.pre_value = 1
+        bias_node.post_value = 1
         input_hidden_nodes[i].append(bias_node)
     
     for i in range(10):
@@ -101,9 +102,9 @@ def init_network():
 def run_epoch(data, input_hidden_nodes, output_nodes):
     accuracy_sum = 0
     for image in data:
-        accuracy_sum +=  run_single_image(image, input_hidden_nodes, output_nodes)
+        accuracy_sum += run_single_image(image, input_hidden_nodes, output_nodes)
 
-    print(accuracy_sum/len(data))
+    print(round(accuracy_sum/len(data)*100,3))
 
     random.shuffle(data)
 
@@ -126,25 +127,26 @@ def run_single_image(image, input_hidden_nodes, output_nodes):
         cur_activation_sum = 0
         for end_edge in end_node.input_edges:
             cur_activation_sum += end_edge.weight * end_edge.input_node.post_value
-        end_node.pre_value = cur_activation_sum
         end_node.post_value = activation_function(cur_activation_sum)
+        end_node.pre_value = cur_activation_sum
 
     back_propogate(image, input_hidden_nodes, output_nodes)
 
+    m_node = max_node(output_nodes)
+
     #print([node.pre_value for node in output_nodes])
     #print([node.post_value for node in output_nodes])
-    #print("\n")
+    #print(m_node.output_number, '\n')
 
-    m_node = max_node(output_nodes)
-    if output_nodes.index(m_node) == image.number: return 1
-    return 0
+    if m_node.output_number == image.number: return 1
+    else: return 0
 
     
 def max_node(output_nodes):
     cur_out = output_nodes[0]
     
     for node in output_nodes[1:]:
-        if node.post_value > cur_out.post_value: cur_out = node
+        if node.post_value > cur_out.post_value : cur_out = node
     
     return cur_out
 
@@ -153,9 +155,9 @@ def back_propogate(image, input_hidden_nodes, output_nodes):
     for node in output_nodes:
         der_value = der_activation_function(node.pre_value)
         output_error = calculate_error(node, image)
+        weight_change = LEARNING_RATE * output_error * der_value
         for edge in node.input_edges:
-            weight_change = LEARNING_RATE * output_error * der_value * edge.input_node.post_value
-            edge.weight = edge.weight + weight_change
+            edge.weight = edge.weight + (weight_change * edge.input_node.post_value)
 
     #for hidden_layer in input_hidden_nodes[1::-1]:
     #    for node in hidden_layer[:-1]:
@@ -180,10 +182,10 @@ def calculate_error(output_node, actual_number):
 def train_model():
     training_data, testing_data = read_data()
     input_hidden_nodes, output_nodes = init_network()
-    for _ in range(10):
+    for _ in range(NUM_EPOCHS):
         run_epoch(training_data, input_hidden_nodes, output_nodes)
     #run_single_image(training_data[0], input_hidden_nodes, output_nodes)
-    #print(training_data[0])
+    print(training_data[-1])
 
 def main():
    train_model()
