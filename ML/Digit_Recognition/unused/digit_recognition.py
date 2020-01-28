@@ -1,8 +1,8 @@
 import random
 import math
 
-NUM_EPOCHS = 50
-LEARNING_RATE = 1
+NUM_EPOCHS = 1
+LEARNING_RATE= 1
 MIN_INITIAL_WEIGHT = -1
 MAX_INITIAL_WEIGHT = 1
 
@@ -51,14 +51,12 @@ def read_data():
     data = [list(), list()]
 
     for i in range(len(training_files)):
-        cur_file = training_files[i]
-        cur_list = data[i]
-        with open(cur_file, 'r') as file:
+        with open(training_files[i], 'r') as file:
             uncompleted_image = list()
             for line in file:
                 processed_line = [int(i) for i in list(line.strip())]
                 if len(processed_line) == 1:
-                    cur_list.append(Image(uncompleted_image.copy(), processed_line[0]))
+                    data[i].append(Image(uncompleted_image.copy(), processed_line[0]))
                     uncompleted_image = list()
                 else:
                     uncompleted_image.append(processed_line.copy())
@@ -81,20 +79,18 @@ def init_network():
     for i in range(10):
         output_nodes.append(Output_Node(i))
 
-    for i in range(len(input_hidden_nodes[:-1])):
-       cur_layer = input_hidden_nodes[i]
-       next_layer = input_hidden_nodes[i+1]
-       for cur_node in cur_layer:
-           for next_node in next_layer[:-1]:
+    for i in range(len(input_hidden_nodes[:-2])):
+       for cur_node in input_hidden_nodes[i]:
+           for next_node in input_hidden_nodes[i+1][:-1]:
                cur_edge = Edge(cur_node, next_node)
                cur_node.output_edges.append(cur_edge)
                next_node.input_edges.append(cur_edge)
 
-    for cur_node in input_hidden_nodes[-1]:
-        for next_node in output_nodes:
-            cur_edge = Edge(cur_node, next_node)
-            cur_node.output_edges.append(cur_edge)
-            next_node.input_edges.append(cur_edge)
+    for output_node in output_nodes:
+        for pre_node in input_hidden_nodes[-1]:
+            cur_edge = Edge(pre_node, output_node)
+            pre_node.output_edges.append(cur_edge)
+            output_node.input_edges.append(cur_edge)
 
     return (input_hidden_nodes, output_nodes)
 
@@ -106,7 +102,7 @@ def run_epoch(data, input_hidden_nodes, output_nodes):
 
     print(round(accuracy_sum/len(data)*100,3))
 
-    random.shuffle(data)
+    #random.shuffle(data)
 
 def run_single_image(image, input_hidden_nodes, output_nodes):
     flattened_image = image.flatten()
@@ -157,7 +153,7 @@ def back_propogate(image, input_hidden_nodes, output_nodes):
         output_error = calculate_error(node, image)
         weight_change = LEARNING_RATE * output_error * der_value
         for edge in node.input_edges:
-            edge.weight = edge.weight + (weight_change * edge.input_node.post_value)
+            edge.weight += weight_change * edge.input_node.post_value
 
     #for hidden_layer in input_hidden_nodes[1::-1]:
     #    for node in hidden_layer[:-1]:
