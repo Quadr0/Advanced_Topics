@@ -1,8 +1,8 @@
 import random
 import math
 
-NUM_EPOCHS = 5
-LEARNING_RATE = .5
+NUM_EPOCHS = 25
+LEARNING_RATE = .2
 MIN_INITIAL_WEIGHT = -1
 MAX_INITIAL_WEIGHT = 1
 

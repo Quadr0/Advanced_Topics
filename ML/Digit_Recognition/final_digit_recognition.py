@@ -34,8 +34,7 @@ class Node:
         self.value = 0.0
         self.input_edges = list()
         self.output_edges = list()
-
-    def __repr__(self):
+def __repr__(self):
         return str(self.value)
 
 class Edge:
@@ -85,7 +84,14 @@ def init_network():
     return model
 
 def run_epoch(data, model):
-    pass
+    cur_sum = 0
+    for image in data:
+        cur_sum += run_single_image(image, model)
+
+    print(round(cur_sum/len(data)*100, 3), '\n')
+
+    random.shuffle(data)
+
 
 def run_single_image(image, model):
     flattened_image = image.flatten()
@@ -94,19 +100,33 @@ def run_single_image(image, model):
         model[0][i].value = flattened_image[i]
 
     for output_node in model[-1]:
-        cur_activation_sum = 0.0
+        cur_value = 0.0
         for edge in output_node.input_edges:
-            cur_activation_sum += edge.weight * sigmoid_function(edge.input_node.value)
-        output_node.value = cur_activation_sum
+            cur_value += edge.weight * sigmoid_function(edge.input_node.value)
+        output_node.value = cur_value
 
 
     backpropogate(image, model)
+
+    if model[-1].index(max_node(model)) == image.actual_number: return 1
+    else: return 0
     
 def max_node(model):
-    pass
+    out = model[-1][0]
+    for node in model[-1][1:]:
+        if node.value > out.value: out = node
+    return out
     
 def backpropogate(image, model):
-    pass
+    for output_node in model[-1]:
+        der_value = sigmoid_derivative(output_node.value)
+        error = calculate_error(image, model, output_node)
+        pre_weight_change = LEARNING_RATE * error * der_value
+        for edge in output_node.input_edges:
+            print(edge.weight)
+            print(sigmoid_function(edge.input_node.value) * pre_weight_change)
+            edge.weight += sigmoid_function(edge.input_node.value) * pre_weight_change
+            print(edge.weight ,'\n')
     
 def sigmoid_function(x): 
     return 1/(1+math.e**(-x))
@@ -115,11 +135,12 @@ def sigmoid_derivative(x):
     return sigmoid_function(x) * (1-sigmoid_function(x))
 
 def calculate_error(image, model, node):
-    pass
+    return (0.0 if model[-1].index(node) != image.actual_number else 1.0) - sigmoid_function(node.value)
 
 def train_model():
     training_data, testing_data = read_data()
     model = init_network()
+    #print(len(model[-1][0].input_edges))
     for _ in range(NUM_EPOCHS):
         run_epoch(training_data, model)
 
