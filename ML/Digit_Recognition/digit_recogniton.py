@@ -101,8 +101,9 @@ def run_epoch(data, model, backprop=True):
     return str(round(cur_sum/len(data)*100, 3))
 
 
-def run_single_image(image, model, backprop):
-    flattened_image = image.flatten()
+def run_single_image(image, model, backprop=True, acc_mode=True):
+    if acc_mode: flattened_image = image.flatten()
+    else: flattened_image = image
 
     for i in range(len(flattened_image)):
         model[0][i].value = flattened_image[i]
@@ -116,8 +117,14 @@ def run_single_image(image, model, backprop):
 
     if(backprop): backpropogate(image, model)
 
-    if model[-1].index(max_node(model)) == image.actual_number: return 1
-    else: return 0
+    index_of_max = model[-1].index(max_node(model))
+
+    if acc_mode:
+        if index_of_max == image.actual_number: return 1
+        else: return 0
+
+    else: 
+        return index_of_max
     
 def max_node(model):
     out = model[-1][0]

@@ -27,38 +27,92 @@ class Paint(object):
 
 
         #test_data = dr.read_data('optdigits-32x32.tes')
-        #model = dr.init_network()
-        #dr.weights_from_file(model)
         #accuracy = dr.run_epoch(test_data, model, backprop=False)
         #print('the accuracy of this training epoch is', accuracy)
 
     def setup(self):
         self.old_x = None
         self.old_y = None
-        self.line_width = 15.0
+        self.line_width = 30.0
         self.color = 'black'
         #self.eraser_on = False
         #self.active_button = self.pen_button
         self.c.bind('<B1-Motion>', self.paint)
         self.c.bind('<ButtonRelease-1>', self.reset)
 
+        self.model = dr.init_network()
+        dr.weights_from_file(self.model)
+
     def clear_canvas(self):
         self.c.delete('all')
 
     def use_model(self):
-        self.c.postscript(file='runtime_files/pre_scaled_img.eps')
-        pre_scaled_img = Image.open_eps('runtime_files/pre_scaled_img.eps')
-        pre_scaled_img.save('runtime_files/raster_canvas.jpg', 'JPEG')
+        self.c.postscript(file='runtime_files/pre_scaled_img.eps', pagewidth=319, pageheight=319)
+        pre_scaled_img = Image.open('runtime_files/pre_scaled_img.eps')
+
+        #pre_scaled_img.save('runtime_files/raster_canvas.png', 'png')
+
         pre_scaled_arr = self.img_to_arr(pre_scaled_img)
+        scaled_arr = self.down_scale_arr(pre_scaled_arr)
+
+        scaled_2d_flat_list = list(scaled_arr.flatten().tolist())
+        print(self.guess_number(scaled_2d_flat_list))
         
+
+    def guess_number(self, list_2d):
+        for i in range(len(list_2d)):
+            self.model[0][i].value = list_2d[i]
+
+        for output_node in self.model[-1]:
+            cur_value = 0.0
+            for edge in output_node.input_edges:
+                cur_value += edge.weight * dr.sigmoid_function(edge.input_node.value)
+            output_node.value = cur_value
+
+        return self.model[-1].index(dr.max_node(self.model))
+    
     def img_to_arr(self, pre_scaled_img):
-        
         out_arr = pre_scaled_img.getdata()
-        print(len(out_arr))
+
+        #print(len(out_arr))
+
         out_arr = np.array([1 if sum(i) == 0 else 0 for i in out_arr])
-        #out_arr.reshape(320,320)
+        out_arr = np.reshape(out_arr, (320,320))
+
+        #print(out_arr.shape)
+        #print([i for i in out_arr[:10]])
 
         return out_arr
+
+    def down_scale_arr(self, pre_scaled_arr):
+        out_arr = np.reshape(np.zeros(32**2), (32,32)).astype(int)
+        
+        for i in range(32):
+            for j in range(32):
+                out_arr[i][j] = self.average_ten_pixels(pre_scaled_arr, i, j)
+                
+
+        out = ""
+        for line in out_arr: 
+            for i in line:
+                out += str(i)
+            out += '\n'
+        print(out)
+
+        return out_arr
+
+    def average_ten_pixels(self, arr, i, j):
+        cur_avg = 0
+        big_i = i*10
+        big_j = j*10
+
+        for x in range(big_i, big_i + 10):
+            for y in range(big_j, big_j + 10):
+                cur_avg += arr[x][y]
+
+        if cur_avg > 2: return 1
+        else: return 0
+        
 
 
     #def use_eraser(self):
