@@ -3,8 +3,8 @@ import math
 
 NUM_EPOCHS = 5
 LEARNING_RATE = .1
-MIN_INITIAL_WEIGHT = -1
-MAX_INITIAL_WEIGHT = 1
+MIN_INITIAL_WEIGHT = -.4
+MAX_INITIAL_WEIGHT = .4
 
 NODES_IN_MODEL_LAYERS = [1024, 10]
 
@@ -22,7 +22,7 @@ class Image:
 
     def __repr__(self):
         out = ""
-        for line in self.image:
+        for line in self.image: 
             for i in line:
                 out += str(i)
             out += '\n'
@@ -46,22 +46,22 @@ class Edge:
     def __repr__(self):
         return str(self.weight)
 
-def read_data():
-    training_files = ['optdigits-32x32.tra', 'optdigits-32x32.tes']
-    data = [list(), list()]
+def read_data(data_files):
+    images = list()
 
-    for i in range(len(training_files)):
-        with open(training_files[i], 'r') as file:
+    for i in range(len(data_files)):
+        images.append(list())
+        with open(data_files[i], 'r') as file:
             uncompleted_image = list()
             for line in file:
                 processed_line = [int(i) for i in list(line.strip())]
                 if len(processed_line) == 1:
-                    data[i].append(Image(uncompleted_image.copy(), processed_line[0]))
+                    images[i].append(Image(uncompleted_image.copy(), processed_line[0]))
                     uncompleted_image = list()
                 else:
                     uncompleted_image.append(processed_line.copy())
 
-    return (data[0], data[1])
+    return images
 
 def init_network():
     model = [list() for _ in range(len(NODES_IN_MODEL_LAYERS))]
@@ -83,17 +83,25 @@ def init_network():
 
     return model
 
-def run_epoch(data, model):
+def weights_from_file(model):
+    with open('edge_values.txt', 'r') as file:
+        for node in model[0]:
+            for edge in node.output_edges:
+                edge.weight = float(file.readline().strip())
+            file.readline()
+
+
+def run_epoch(data, model, backprop=True):
     cur_sum = 0
     for image in data:
-        cur_sum += run_single_image(image, model)
+        cur_sum += run_single_image(image, model, backprop)
 
-    print(round(cur_sum/len(data)*100, 3), '\n')
 
     random.shuffle(data)
+    return str(round(cur_sum/len(data)*100, 3))
 
 
-def run_single_image(image, model):
+def run_single_image(image, model, backprop):
     flattened_image = image.flatten()
 
     for i in range(len(flattened_image)):
@@ -106,7 +114,7 @@ def run_single_image(image, model):
         output_node.value = cur_value
 
 
-    backpropogate(image, model)
+    if(backprop): backpropogate(image, model)
 
     if model[-1].index(max_node(model)) == image.actual_number: return 1
     else: return 0
@@ -123,10 +131,15 @@ def backpropogate(image, model):
         error = calculate_error(image, model, output_node)
         pre_weight_change = LEARNING_RATE * error * der_value
         for edge in output_node.input_edges:
-            print(edge.weight)
-            print(sigmoid_function(edge.input_node.value) * pre_weight_change)
             edge.weight += sigmoid_function(edge.input_node.value) * pre_weight_change
-            print(edge.weight ,'\n')
+
+def save_to_file(model):
+    f = open('edge_values.txt', 'w')
+    for input_node in model[0]:
+        for edge in input_node.output_edges:
+            f.write(str(edge.weight) + '\n')
+        f.write('\n')
+    f.close()
     
 def sigmoid_function(x): 
     return 1/(1+math.e**(-x))
@@ -137,14 +150,18 @@ def sigmoid_derivative(x):
 def calculate_error(image, model, node):
     return (0.0 if model[-1].index(node) != image.actual_number else 1.0) - sigmoid_function(node.value)
 
-def train_model():
-    training_data, testing_data = read_data()
-    model = init_network()
-    #print(len(model[-1][0].input_edges))
-    for _ in range(NUM_EPOCHS):
-        run_epoch(training_data, model)
-
 def main():
-   train_model()
+    data_files = ['optdigits-32x32.tra', 'optdigits-32x32.tes']
+    training_data, testing_data = read_data(data_files)
+    model = init_network()
+    #for _ in range(NUM_EPOCHS):
+    #    accuracy = run_epoch(training_data, model)
+    #    print('The accuracy of this training epoch is', accuracy)
+
+    #save_to_file(model)
+    weights_from_file(model)    
+
+    accuracy = run_epoch(testing_data, model, backprop=False)
+    print('The accuracy of this training epoch is', accuracy)
 
 if __name__=='__main__': main()

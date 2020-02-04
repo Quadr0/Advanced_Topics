@@ -55,7 +55,6 @@ def init_network():
         if i != len(NODES_IN_MODEL_LAYERS)-1: model[i*2].append(1.0)
 
     for i in reversed(range(1, len(NODES_IN_MODEL_LAYERS))):
-        #print(i)
         for j in range(len(model[i*2]) - (1 if i*2+1 != len(model) else 0)):
             model[i*2-1].append(list())
             for k in range(len(model[i*2-2])):
