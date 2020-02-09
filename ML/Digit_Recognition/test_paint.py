@@ -30,7 +30,7 @@ class Paint(object):
     def setup(self):
         self.old_x = None
         self.old_y = None
-        self.line_width = 30.0
+        self.line_width = 18.0
         self.color = 'black'
         #self.eraser_on = False
         #self.active_button = self.pen_button
@@ -40,9 +40,9 @@ class Paint(object):
         self.model = dr.init_network()
         dr.weights_from_file(self.model)
 
-        self.test_data = dr.read_data(['optdigits-32x32.tes'])[0]
-        accuracy = dr.run_epoch(self.test_data, self.model, backprop=False)
-        print('the accuracy of this training epoch is', accuracy)
+        #self.test_data = dr.read_data(['optdigits-32x32.tes'])[0]
+        #accuracy = dr.run_epoch(self.test_data, self.model, backprop=False)
+        #print('the accuracy of this training epoch is', accuracy)
         
 
     def clear_canvas(self):
@@ -112,7 +112,7 @@ class Paint(object):
             for y in range(big_j, big_j + 10):
                 cur_avg += arr[x][y]
 
-        if cur_avg >= 1: return 1
+        if cur_avg > 1: return 1
         else: return 0
         
 
