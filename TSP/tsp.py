@@ -1,7 +1,7 @@
 import random, math
+import matplotlib.pyplot as plt
 
-INIT_PHER = .05
-NUM_ITERATIONS = 100
+NUM_ITERATIONS = 50
 NUM_ANTS = 20 
 PHER_EVAP = .2
 ALPHA = 1
@@ -23,7 +23,7 @@ class City:
 
 class Ant:
     def __init__(self, start_city):
-        self.tour = start_city
+        self.tour = [start_city]
 
 def file_to_graph(filename):
     cities = list()
@@ -42,7 +42,7 @@ def file_to_graph(filename):
 
 
 def reset_ants(cities):
-    return [Ant([cities[0]].copy()) for i in range(NUM_ANTS)]
+    return [Ant(cities[0]) for i in range(NUM_ANTS)]
 
 def iteration(ants, cities, pheramones):
     for ant in ants:
@@ -132,8 +132,6 @@ def optimal_length(filename, cities):
 
 
 def set_pher(cities):
-    global INIT_PHER
-
     nn_ant = Ant(cities[0])
     distance = 0
 
@@ -149,15 +147,31 @@ def set_pher(cities):
         distance += cur_city.distance(next_city)
         nn_ant.tour.append(next_city)
 
-    INIT_PHER = 1 / distance
+    return 1 / distance
 
 
+def plot_solution(ant, cities):
+
+    for i in range(len(ant.tour)-1):
+        cur_city = ant.tour[i]
+        next_city = ant.tour[i+1]
+
+        xs = [cur_city.x, next_city.x]
+        ys = [cur_city.y, next_city.y]
+
+        plt.plot(xs, ys, 'yo-')
+
+    plt.plot([c.x for c in ant.tour], [[c.y] for c in ant.tour], 'bo', linewidth=6)
+
+    plt.show()
 
 def main():
     cities = file_to_graph(TSP_FILE)
-    pheramones = [[INIT_PHER for i in cities] for j in cities]
-    set_pher(cities)
+    init_pher = set_pher(cities)
+    pheramones = [[init_pher for i in cities] for j in cities]
     ants = reset_ants(cities)
+
+    print('init pher is:', init_pher)
     
     min_ant = None
     
@@ -170,6 +184,7 @@ def main():
         if min_ant == None: min_ant = ants[0]
 
         temp_ant = deposit_pheremones_min_ant(ants, pheramones)
+
         if tour_length(temp_ant) < tour_length(min_ant): min_ant = temp_ant
 
         #for ant in ants: 
@@ -179,5 +194,7 @@ def main():
 
 
     print('The optimal length is :', str(optimal_length(OPT_FILE, cities)), '\n')
+
+    plot_solution(min_ant, cities)
 
 if __name__=="__main__": main()
