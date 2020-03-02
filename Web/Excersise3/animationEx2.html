@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<style>
+		#container {
+		  background: #01fcc8;
+		}
+		</style>
+		<title>Animation Example 2</title>
+	</head>
+	<center>
+	<body onmousemove="mousePosition(event)" onload="setUp()">
+		<p><button onclick="moveBox()">Toggle Animation</button></p>
+		<svg id="container" width="400" height="400">
+			<circle id="circle" cx="20" cy="20" r="20"/>
+			<rect id="bar" x="200" y="385" width="80" height="11"/>
+		</svg>
+
+		<!-- SCRIPT CONTAINED BELOW -->
+		<script>
+		var id, vx, vy, posX, posY; // global variables for ball position and id number of interval
+		function mousePosition(e) {
+			var bbox = document.getElementById("container").getBoundingClientRect();
+			var bar = document.getElementById("bar");
+			if (e.clientX >= bbox.left && e.clientX <= bbox.right-bar.getAttribute("width")){
+				bar.setAttribute("x", e.clientX-bbox.left);
+			}
+		}
+
+		function setUp() {
+			vx = 1;
+			vy = -1;
+			var c = document.getElementById("circle");
+			posX = Math.random() * 200;
+			posY = Math.random() * 200;
+			c.setAttribute("cx", posX);
+			c.setAttribute("cy", posY);
+			c.setAttribute("fill", "#" + (Math.random().toString(16) + "00000").substring(2,8));
+		}
+
+		function moveBox() {
+			if (id != null) { // need this check incase the id has not yet been set
+				clearInterval(id); // need this incase the user clicks the move button
+								   // while it is already animating.
+				id = null;
+			} else {
+				id = setInterval(updatePos, 5); // sets interval for every 5 milliseconds, call updatePos method.
+												// id is returned value, which is id of the interval timer. this is how you can clear the interval.
+			}
+		}
+
+		function updatePos() {
+			var c = document.getElementById("circle"); // grab the circle from the document
+			var paddle = document.getElementById("bar"); // grab the bar from the document
+			var radius = parseFloat(c.getAttribute("r")); // get radius
+			var svgWidth = parseFloat(document.getElementById("container").getAttribute("width")); // get width of svg
+			var svgHeight = parseFloat(document.getElementById("container").getAttribute("height")); // get height of svg
+			var paddleX = parseFloat(paddle.getAttribute("x"));
+			var paddleY = parseFloat(paddle.getAttribute("y"));
+			var paddleWidth = parseFloat(paddle.getAttribute("width"));
+
+			// find position of the ball
+			var cx = parseFloat(c.getAttribute("cx"));
+			var cy = parseFloat(c.getAttribute("cy"));
+
+			if (cx - radius <= 0 || cx + radius >= svgWidth) { // once circle hits the edge of the svg, stop animation
+				vx *= -1;
+			} else if (cy - radius <= 0) {
+				vy *= -1;
+			} else if (cy + radius >= svgHeight) {
+				vy *= -1;
+				console.log("lose");
+				clearInterval(id);
+				id = null;
+			} else if ((cy + radius <= paddleY + 5 && cy + radius >= paddleY - 5) && (cx + radius <= paddleX + paddleWidth && cx - radius >= paddleX)) {
+				vy *= -1;
+			}
+
+			c.setAttribute("cx", cx+vx); // update x
+			c.setAttribute("cy", cy+vy); // update y
+		}
+		</script>
+
+	</body>
+</center>
+</html>

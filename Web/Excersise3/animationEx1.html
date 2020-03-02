@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<style>
+		#container {
+		  background: #01fcc8;
+		}
+		/* #circle {
+		  fill: #fc780b;
+		} */
+		</style>
+		<title>Animation Example 1</title>
+	</head>
+
+	<center>
+	<body onmousemove="mousePosition(event)" onload="setup()">
+		<!-- Button -->
+		<p><button onclick="moveBox()">Toggle Animation</button></p>
+
+		<!-- SVG with circle in it -->
+		<svg id="container" width="400" height="400">
+			<circle id="circle" cx="20" cy="20" r="20" fill="orange"/>
+			<rect id="rect" x="150" y="350" height="20" width="150" fill="blue"/>
+		</svg>
+
+		<!-- SCRIPT IS BELOW -->
+		<script>
+		var id, posX, posY, vx, vy, dir; // global variables for ball position and id number of interval
+
+		function setup() {
+			var c = document.getElementById("circle");
+			var r = parseFloat(c.getAttribute("r"));
+
+			var bbox = document.getElementById("container").getBoundingClientRect();
+			var widthBBox = parseFloat(bbox.width);
+			var heightBBox = parseFloat(bbox.height);
+
+			posX = r + Math.random() * (widthBBox - r);
+			posY = r + Math.random() * (heightBBox - r);
+
+			c.setAttribute("cx", posX);
+			c.setAttribute("cy", posY);
+
+			vx = 1;
+			vy = 1;
+
+		}
+
+		function moveBox() {
+			if (id != null) { // need this check incase the id has not yet been set
+				clearInterval(id); // need this incase the user clicks the move button
+								   // while it is already animating.
+				id = null;
+			}
+			else {
+				id = setInterval(updatePos, 5);
+			}
+
+			// if (pos == null) {
+			// 	pos = parseFloat(document.getElementById("circle").getAttribute("r")); // reset pos to radius of circle (puts it in the top left)
+			// }
+
+		  	 // sets interval for every 5 milliseconds, call updatePos method.
+											// id is returned value, which is id of the interval timer. this is how you can clear the interval.
+		}
+
+		function updatePos() {
+			var c = document.getElementById("circle"); // grab the circle from the document
+			var radius = parseFloat(c.getAttribute("r")); // get radius
+			var svgWidth = parseFloat(document.getElementById("container").getAttribute("width")); // get width of svg
+			var svgHeight = parseFloat(document.getElementById("container").getAttribute("height"))
+
+			if (posX + radius  >= svgWidth) { // once circle hits the edge of the svg, stop animation
+				vx = -1;
+				c.setAttribute("fill", getRandomColor());
+				//console.log(c.getAttribute("fill"));
+			}
+			else if (radius >= posX){
+				vx = 1;
+				c.setAttribute("fill", getRandomColor());
+			}
+
+			if (posY + radius  >= svgHeight) { // once circle hits the edge of the svg, stop animation
+				vy = -1;
+				c.setAttribute("fill", getRandomColor());
+				//console.log(c.getAttribute("fill"));
+			}
+			else if (radius >= posY){
+				vy = 1;
+				c.setAttribute("fill", getRandomColor());
+			}
+
+
+			posX += vx;
+			posY += vy;
+			c.setAttribute("cx", posX); // update x
+			c.setAttribute("cy", posY); // update y
+			
+		}
+
+		function mousePosition(e) {
+			var xMouse = parseFloat(e.clientX);
+			
+			var r = document.getElementById("rect");
+			var widthRect = parseFloat(r.getAttribute("width"));
+
+			var bbox = document.getElementById("container").getBoundingClientRect();
+			var widthBound = parseFloat(bbox.width);
+			var rightBBox = parseFloat(bbox.right);
+			var leftBBox = parseFloat(bbox.left);
+
+			if (xMouse + widthRect/2 >= rightBBox) {
+				r.setAttribute("x", widthBound - widthRect);
+			}
+			else if (xMouse - widthRect/2 <= leftBBox) {
+				r.setAttribute("x", leftBBox - widthRect);
+			}
+			else {
+				r.setAttribute("x", xMouse - widthRect * 3/2);
+			}
+		}
+
+		function getRandomColor() {
+    		return '#' + (Math.random().toString(16) + "000000").substring(2,8);
+		}
+		</script>
+
+	</body>
+	</center>
+</html>
