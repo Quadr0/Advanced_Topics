@@ -1,5 +1,9 @@
 var id, posX, posY, vx, vy;
 
+var maxBlockY, minPaddleY = 500;
+
+var bricks;
+
 const NumRects = 20;
 const RecWidth = 100, RecLength = 35;
 
@@ -38,15 +42,15 @@ function resetBall() {
 
 function resetRects() {
     var origX = 50.5, origY = 50;
-    rects = getRects();
+    bricks = getRects();
 
     var curX = origX, curY = origY;
 
     var bbox = document.getElementById("container").getBoundingClientRect();
-    var bboxWidth = parseFloat(bbox.right);
+    var bboxWidth = parseFloat(bbox.width);
     for(var i = 0; i < NumRects; i++) {
 
-        if(curX + RecWidth*2 >= bboxWidth - 50) {
+        if(curX + RecWidth + 15 >= bboxWidth) {
             curX = origX;
             curY += RecLength + 15;
         }
@@ -64,6 +68,7 @@ function resetRects() {
 
         curX += RecWidth + 33.33;
     }
+    biggestBlockY = curY + RecLength;
 }
 
 function getRects() {
@@ -80,22 +85,22 @@ function getRects() {
 function mousePosition(e) {
     var xMouse = parseFloat(e.clientX);
     
-    var r = document.getElementById("paddle");
-    var widthRect = parseFloat(r.getAttribute("width"));
+    var addle = document.getElementById("paddle");
+    var widthPaddle = parseFloat(paddle.getAttribute("width"));
 
     var bbox = document.getElementById("container").getBoundingClientRect();
     var widthBBox = parseFloat(bbox.width);
     var rightBBox = parseFloat(bbox.right);
     var leftBBox = parseFloat(bbox.left);
 
-    if (xMouse + widthRect/2 >= rightBBox) {
-        r.setAttribute("x", widthBBox - widthRect);
+    if (xMouse + widthPaddle/2 >= rightBBox) {
+        paddle.setAttribute("x", widthBBox - widthPaddle);
     }
-    else if (xMouse - widthRect/2 <= leftBBox) {
-        r.setAttribute("x", 0);
+    else if (xMouse - widthPaddle/2 <= leftBBox) {
+        paddle.setAttribute("x", 0);
     }
     else {
-        r.setAttribute("x", xMouse - widthRect*3/2 + 20);
+        paddle.setAttribute("x", xMouse - leftBBox - widthPaddle/2);
     }
 }
 
@@ -118,14 +123,25 @@ function gameActions() {
 }
 
 function paddleCollision() {
-    var ball = document.getElementById("ball"); 
+    
+    var xBall = parseFloat(ball.getAttribute("cx"));
+    var yBall = parseFloat(ball.getAttribute("cy"));
+    var radius = parseFloat(ball.getAttribute("r"));
+
+    if(yBall <= minPaddleY) return;
 
     var paddle = document.getElementById("paddle");
+    var xPaddle = parseFloat(paddle.getAttribute("x"));
+    var yPaddle = parseFloat(paddle.getAttribute("y"));
+    var widthPaddle = parseFloat(paddle.getAttribute("width"));
+    var lengthPaddle = parseFloat(paddle.getAttribute("height"));
+
+    console.log(xBall)
 
 }
 
-function rectCollision(bbox) {
-
+function rectCollision(rect) {
+    var ball = document.getElementById("ball");
 }
 
 function wallCollisions() {
