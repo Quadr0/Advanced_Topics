@@ -10,7 +10,10 @@
 </head>
 <center>
 <body onmousemove="mousePosition(event)" onload="setup()">
-    <p><button onclick="startGame()">Start Game</button></p>
+    <p>
+        <button onclick="startGame()">Start Game</button>
+        <button onclick="resetGame()">Reset Game</button>
+    </p>
 
     <svg id="container" width="600" height="600">
         <circle id="ball" cx="20" cy="20" r="20" fill="orange"/>
