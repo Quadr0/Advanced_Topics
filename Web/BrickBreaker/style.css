@@ -1,6 +1,53 @@
 body{
-    background: beige;
+    background-image: url(pastel_background_01.jpg);
+    margin: 0;
+
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
+
+.credit-links {
+    margin-left: 10px;
+}
+
+.links{
+    background-color: #FAACA8;
+    background-image: linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
+
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    padding: 10px;
+}
+
+.tab-links {
+    margin-left: 20px;
+}
+
+a {
+    text-decoration: none;
+
+    font-weight: bold;
+    font-style: oblique;
+    color: blue;
+}
+
+.game-buttons{
+    clear: both;
+    background-color: g;
+    position: fixed;
+    width: 100%;
+    top: 34px;
+    padding: 10px;
+}
+
+button{
+    font-style: oblique;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
 #container{
     background: #01fcc8;
+    position: relative;
+    /* padding: 10px; */
+    top:80px;
 }
