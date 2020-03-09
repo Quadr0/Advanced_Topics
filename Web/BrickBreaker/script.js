@@ -1,5 +1,7 @@
 var id, posX, posY, vx, vy;
 
+var gamesWon = 0, gamesLost = 0;
+
 var maxBlockY, minPaddleY = 500;
 
 var bricks;
@@ -27,7 +29,7 @@ function resetGame() {
 function resetBall() {
     var ball = document.getElementById("ball");
     var radius = parseFloat(ball.getAttribute("r"));
-    console.log(radius);
+    //console.log(radius);
 
     var bbox = document.getElementById("container").getBoundingClientRect();
     var widthBBox = parseFloat(bbox.width);
@@ -113,10 +115,14 @@ function gameActions() {
     ball.setAttribute("cy", posY);
 
     if(bricks.length == 0) {
+        gamesWon++;
+        document.getElementById("games-won").innerHTML= ("You have won " + gamesWon + " game(s)!");
+
         alert("You have won the game");
         clearInterval(id);
         id = null;
     }
+    
 }
 
 function paddleCollision() {
@@ -124,7 +130,7 @@ function paddleCollision() {
     var ball = document.getElementById("ball");
     var radius = parseFloat(ball.getAttribute("r"));
 
-    if(posY <= minPaddleY) return;
+    //if(posY <= minPaddleY) return;
 
     var paddle = document.getElementById("paddle");
     var xPaddle = parseFloat(paddle.getAttribute("x"));
@@ -136,16 +142,16 @@ function paddleCollision() {
 
     // Check if ball bounces of top of paddle.
     // TODO: should this not be yPadde + heightPaddle - .5
-    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle + heightPaddle - 1, yPaddle + heightPaddle + 1)) {
+    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle + heightPaddle, 15)) {
         vy = -1;
     }
 
-    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX - radius, xPaddle + widthPaddle - 1, xPaddle + widthPaddle + 1)) {
+    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX - radius, xPaddle + widthPaddle, 2)) {
         vy = -1;
         vx = 1;
     }
 
-    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX + radius, xPaddle - 1, xPaddle + 1)) {
+    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX + radius, xPaddle, 2)) {
         vy = -1;
         vx = -1;
     }
@@ -158,7 +164,7 @@ function brickCollisions() {
     var radius = parseFloat(ball.getAttribute("r"));
     //console.log(bricks.length);
 
-    if(posY >= maxBlockY) return;
+    //if(posY >= maxBlockY) return;
 
     for(var i = bricks.length-1; i >= 0; i--) {
 
@@ -168,35 +174,78 @@ function brickCollisions() {
         var widthBlock = parseFloat(curBrick.getAttribute("width"));
         var heightBlock = parseFloat(curBrick.getAttribute("height"));
 
+        var ballCornerDist = radius / Math.sqrt(2);
+
+
         // bottom of brick
-        if(posX >= xBlock && posX <= xBlock + widthBlock && inRange(posY - radius, yBlock + heightBlock - 1, yBlock + heightBlock + 1)) {
+        if(posX >= xBlock && posX <= xBlock + widthBlock && inRange(posY - radius, yBlock + heightBlock, 1)) {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
+            vy = 1;
             //console.log("asdf")
             return;
         }
 
         // top of brick
-        else if(posX >= xBlock && posX <= xBlock + widthBlock && inRange(posY + radius, yBlock - 1, yBlock + 1)) {
+        else if(posX >= xBlock && posX <= xBlock + widthBlock && inRange(posY + radius, yBlock, 1)) {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
+            vy = -1;
             //console.log("asdf")
             return;
         }
 
         //right of brick
-        else if(posY >= yBlock && posY <= yBlock + heightBlock && inRange(posX - radius, xBlock + widthBlock - 1, xBlock + widthBlock + 1)) {
+        else if(posY >= yBlock && posY <= yBlock + heightBlock && inRange(posX - radius , xBlock + widthBlock, 1)) {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
-            //console.log("asdf")
+            vx = 1;
             return;
         }
 
         //left of brick
-        else if(posY >= yBlock && posY <= yBlock + heightBlock && inRange(posX + radius, xBlock - 1, xBlock + 1)) {
+        else if(posY >= yBlock && posY <= yBlock + heightBlock && inRange(posX + radius, xBlock, 1)) {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
-            //console.log("asdf")
+            vx = -1;
+            return;
+        }
+
+
+        //check top-left corner of ball
+        else if (inRange(distance(posX - ballCornerDist, posY - ballCornerDist, xBlock + widthBlock, yBlock + heightBlock), 1, 3)){
+        //if (inRange(posX - ballCornerDist, xBlock + widthBlock, 3) && inRange(posY - ballCornerDist, yBlock + heightBlock, 3)){
+            curBrick.style.visibility = "hidden";
+            bricks.splice(i, 1);
+            vy = 1;
+            vx = 1;
+            return;
+        }
+
+        // top-right corner of ball
+        else if (inRange(distance(posX + ballCornerDist, posY - ballCornerDist, xBlock, yBlock + heightBlock), 1, 3)){
+            curBrick.style.visibility = "hidden";
+            bricks.splice(i, 1);
+            vy = 1;
+            vx = -1;
+            return;
+        }
+        
+        // bottom-left of corner
+        else if (inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xBlock + widthBlock, yBlock), 1, 3)){
+            curBrick.style.visibility = "hidden";
+            bricks.splice(i, 1);
+            vy = -1;
+            vx = 1;
+            return;
+        }
+
+        // bottom-right of corner
+        else if (inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xBlock, yBlock), 1, 3)){
+            curBrick.style.visibility = "hidden";
+            bricks.splice(i, 1);
+            vy = -1;
+            vx = 1;
             return;
         }
         
@@ -223,8 +272,12 @@ function wallCollisions() {
     if (posY + radius  >= svgHeight) { 
         vy = -1;
 
+        gamesLost++;
+        document.getElementById("games-lost").innerHTML = ("You have lost " + gamesLost + " games :(");
+
         clearInterval(id); 
         alert("You lost the game");
+        
     }
     else if (radius >= posY){
         vy = 1;
@@ -232,8 +285,12 @@ function wallCollisions() {
     }
 }
 
-function inRange(val, min, max) {
-    if (val >= min && val <= max) return true;
+function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+}
+
+function inRange(val, comp, dif) {
+    if (val >= comp-dif && val <= comp+dif) return true;
     else return false;
 }
 

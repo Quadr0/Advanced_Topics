@@ -32,12 +32,12 @@ a {
 }
 
 .game-buttons{
-    clear: both;
-    background-color: g;
-    position: fixed;
+    position: absolute;
     width: 100%;
-    top: 34px;
-    padding: 10px;
+    top: 42px;
+    /* padding: 10px; */
+    margin-top: 3px;
+    margin-bottom: 20px;
 }
 
 button{
@@ -48,6 +48,16 @@ button{
 #container{
     background: #01fcc8;
     position: relative;
+    margin-top: 82px; 
+    /* top: 100px; */
+}
+
+#game-counter{
+    color: blue;
+    position: relative;
+    /* top: 20px; */
     /* padding: 10px; */
-    top:80px;
+    margin: 1px;
+    color: black;
+    /* z-index: 99; */
 }
