@@ -10,6 +10,7 @@
 </head>
 <center>
 <body onmousemove="mousePosition(event)" onload="setup()">
+    
     <div class="links-tab">
         <a class="tab-links" href="index.html">Go Home</a>
         <a class="tab-links" href="instructions.html">Go To Instructions</a>
@@ -50,9 +51,16 @@
 
     </svg>
 
-    <div class="gmame-counter">
+    <div class="game-counter">
         <p id="games-won">You have won 0 game(s) :)</p>
         <p id="games-lost">You have lost 0 game(s) :(</p>
+    </div>
+
+    <br>
+
+    <div class="slidecontainer">
+        <p id="slider-text">The current slide setting is 5</p>
+        <input type="range" min="1" max="10" value="5" class="slider" id="myRange">
     </div>
     
 </body>

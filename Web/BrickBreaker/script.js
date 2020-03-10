@@ -6,15 +6,27 @@ var maxBlockY, minPaddleY = 500;
 
 var bricks;
 
+var intervalSpeed = 5;
+
 const NumRects = 20;
 const RecWidth = 100, RecLength = 35;
 
 function setup() {
-bricks = getRects();
+    bricks = getRects();
 
     resetRects();
-
     resetBall();
+    
+    // Want this to run as long as page is loaded so I do not store the id.
+    setInterval(changeSpeed, 100);
+}
+
+function startGame() {
+    intervalSpeed = parseFloat(document.getElementById("myRange").value);
+
+    if (id == null) {
+        id = setInterval(gameActions, intervalSpeed);
+    }
 }
 
 function resetGame() {
@@ -96,11 +108,7 @@ function mousePosition(e) {
     }
 }
 
-function startGame() {
-    if (id == null) {
-        id = setInterval(gameActions, 5);
-    }
-}
+
 
 function gameActions() {
     var ball = document.getElementById("ball"); 
@@ -145,16 +153,16 @@ function paddleCollision() {
 
     // Check if ball bounces of top of paddle.
     // TODO: should this not be yPadde + heightPaddle - .5
-    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle, 2)) {
+    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle, 1)) {
         vy = -1;
     }
 
-    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX - radius, xPaddle + widthPaddle, 2)) {
+    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX - radius, xPaddle + widthPaddle, 1)) {
         vy = -1;
         vx = 1;
     }
 
-    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX + radius, xPaddle, 2)) {
+    else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX + radius, xPaddle, 1)) {
         vy = -1;
         vx = -1;
     }
@@ -179,7 +187,7 @@ function brickCollisions() {
     var radius = parseFloat(ball.getAttribute("r"));
     //console.log(bricks.length);
 
-    //if(posY >= maxBlockY) return;
+    if(posY >= maxBlockY) return;
 
     for(var i = bricks.length-1; i >= 0; i--) {
 
@@ -298,6 +306,12 @@ function wallCollisions() {
         vy = 1;
         //c.setAttribute("fill", getRandomPastel());
     }
+}
+
+function changeSpeed() {
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("slider-text");
+    output.innerHTML = ("The current slide setting is " + slider.value); 
 }
 
 function distance(x1, y1, x2, y2) {

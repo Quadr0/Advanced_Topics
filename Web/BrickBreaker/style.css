@@ -6,13 +6,10 @@ body{
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
-
-
 .game-buttons{
     position: absolute;
     width: 100%;
     top: 42px;
-    /* padding: 10px; */
     margin-top: 3px;
     margin-bottom: 20px;
 }
@@ -36,14 +33,13 @@ button{
     color: black;
 }
 
- #instruct-page{
+ .instruct-page{
     position: relative;
-    top: 25px;
+    top: 30px;
     font-size: 16px;
 }
 
 .links-tab{
-    /* background-color: transparent; */
     background-color: #FAACA8;
     background-image: linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
 
@@ -64,3 +60,12 @@ button{
     font-style: oblique;
     color: blue;
 }
+
+  .slider {
+    -webkit-appearance: none;  
+    height: 25px;
+    background: #f5cab3; 
+
+  }
+  
+ 
