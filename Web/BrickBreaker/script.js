@@ -64,7 +64,7 @@ function resetRects() {
         curRect.setAttribute("y", curY);
         curRect.setAttribute("width", RecWidth);
         curRect.setAttribute("height", RecLength);
-        curRect.setAttribute("fill", getRandomColor());
+        curRect.setAttribute("fill", getRandomPastel());
         curRect.setAttribute("stroke", "black");
         curRect.setAttribute("stroke-width", .5);
 
@@ -120,7 +120,7 @@ function gameActions() {
 
         alert("You have won the game");
         clearInterval(id);
-        id = null;
+        //id = null;
     }
     
 }
@@ -130,7 +130,7 @@ function paddleCollision() {
     var ball = document.getElementById("ball");
     var radius = parseFloat(ball.getAttribute("r"));
 
-    //if(posY <= minPaddleY) return;
+    if(posY <= minPaddleY) return;
 
     var paddle = document.getElementById("paddle");
     var xPaddle = parseFloat(paddle.getAttribute("x"));
@@ -138,11 +138,14 @@ function paddleCollision() {
     var widthPaddle = parseFloat(paddle.getAttribute("width"));
     var heightPaddle = parseFloat(paddle.getAttribute("height"));
 
+    var ballCornerDist = radius / Math.sqrt(2);
+
+
     //console.log(xBall)
 
     // Check if ball bounces of top of paddle.
     // TODO: should this not be yPadde + heightPaddle - .5
-    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle + heightPaddle, 15)) {
+    if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle, 2)) {
         vy = -1;
     }
 
@@ -152,6 +155,18 @@ function paddleCollision() {
     }
 
     else if(posY >= yPaddle && posY <= yPaddle + heightPaddle && inRange(posX + radius, xPaddle, 2)) {
+        vy = -1;
+        vx = -1;
+    }
+
+    // bottom-left of ball
+    else if(inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xPaddle + widthPaddle, yPaddle), 1, 1)){
+        vy = -1;
+        vx = 1;
+    }
+
+    // bottom-right of ball
+    else if(inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xPaddle, yPaddle), 1, 1)) {
         vy = -1;
         vx = -1;
     }
@@ -213,7 +228,7 @@ function brickCollisions() {
 
 
         //check top-left corner of ball
-        else if (inRange(distance(posX - ballCornerDist, posY - ballCornerDist, xBlock + widthBlock, yBlock + heightBlock), 1, 3)){
+        else if (inRange(distance(posX - ballCornerDist, posY - ballCornerDist, xBlock + widthBlock, yBlock + heightBlock), 2, 2)){
         //if (inRange(posX - ballCornerDist, xBlock + widthBlock, 3) && inRange(posY - ballCornerDist, yBlock + heightBlock, 3)){
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
@@ -223,7 +238,7 @@ function brickCollisions() {
         }
 
         // top-right corner of ball
-        else if (inRange(distance(posX + ballCornerDist, posY - ballCornerDist, xBlock, yBlock + heightBlock), 1, 3)){
+        else if (inRange(distance(posX + ballCornerDist, posY - ballCornerDist, xBlock, yBlock + heightBlock), 2, 2)){
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
             vy = 1;
@@ -232,7 +247,7 @@ function brickCollisions() {
         }
         
         // bottom-left of corner
-        else if (inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xBlock + widthBlock, yBlock), 1, 3)){
+        else if (inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xBlock + widthBlock, yBlock), 2, 2)){
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
             vy = -1;
@@ -241,7 +256,7 @@ function brickCollisions() {
         }
 
         // bottom-right of corner
-        else if (inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xBlock, yBlock), 1, 3)){
+        else if (inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xBlock, yBlock), 2, 2)){
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
             vy = -1;
@@ -260,12 +275,12 @@ function wallCollisions() {
 
     if (posX + radius  >= svgWidth) { 
         vx = -1;
-        //c.setAttribute("fill", getRandomColor());
+        //c.setAttribute("fill", getRandomPastel());
   
     }
     else if (radius >= posX){
         vx = 1;
-        //c.setAttribute("fill", getRandomColor());
+        //c.setAttribute("fill", getRandomPastel());
     }
 
     // If you hit the bottom wall, you lose the game. 
@@ -273,7 +288,7 @@ function wallCollisions() {
         vy = -1;
 
         gamesLost++;
-        document.getElementById("games-lost").innerHTML = ("You have lost " + gamesLost + " games :(");
+        document.getElementById("games-lost").innerHTML = ("You have lost " + gamesLost + " game(s) :(");
 
         clearInterval(id); 
         alert("You lost the game");
@@ -281,7 +296,7 @@ function wallCollisions() {
     }
     else if (radius >= posY){
         vy = 1;
-        //c.setAttribute("fill", getRandomColor());
+        //c.setAttribute("fill", getRandomPastel());
     }
 }
 
@@ -294,7 +309,7 @@ function inRange(val, comp, dif) {
     else return false;
 }
 
-function getRandomColor() {
+function getRandomPastel() {
     return "hsl(" + 360 * Math.random() + ',' +
     (25 + 70 * Math.random()) + '%,' + 
     (80 + 2 * Math.random()) + '%)'

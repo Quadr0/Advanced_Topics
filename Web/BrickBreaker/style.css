@@ -19,17 +19,14 @@ body{
     padding: 10px;
 }
 
-.tab-links {
-    margin-left: 20px;
-}
 
-a {
+/* a {
     text-decoration: none;
 
     font-weight: bold;
     font-style: oblique;
     color: blue;
-}
+} */
 
 .game-buttons{
     position: absolute;
@@ -55,9 +52,25 @@ button{
 #game-counter{
     color: blue;
     position: relative;
-    /* top: 20px; */
-    /* padding: 10px; */
+
     margin: 1px;
     color: black;
     /* z-index: 99; */
+}
+
+ #instruct-page{
+    position: relative;
+    top: 25px;
+    font-size: 16px;
+}
+
+.tab-links {
+    margin-left: 20px;
+    font-size: 14px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+    font-style: oblique;
+    color: blue;
 }
