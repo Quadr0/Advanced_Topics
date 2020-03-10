@@ -1,32 +1,12 @@
 body{
     background-image: url(pastel_background_01.jpg);
-    margin: 0;
+    background-position: 15% 10%;
 
+    margin: 0;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
-.credit-links {
-    margin-left: 10px;
-}
 
-.links{
-    background-color: #FAACA8;
-    background-image: linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
-
-    position: fixed;
-    top: 0px;
-    width: 100%;
-    padding: 10px;
-}
-
-
-/* a {
-    text-decoration: none;
-
-    font-weight: bold;
-    font-style: oblique;
-    color: blue;
-} */
 
 .game-buttons{
     position: absolute;
@@ -46,7 +26,6 @@ button{
     background: #01fcc8;
     position: relative;
     margin-top: 82px; 
-    /* top: 100px; */
 }
 
 #game-counter{
@@ -55,7 +34,6 @@ button{
 
     margin: 1px;
     color: black;
-    /* z-index: 99; */
 }
 
  #instruct-page{
@@ -64,8 +42,20 @@ button{
     font-size: 16px;
 }
 
-.tab-links {
-    margin-left: 20px;
+.links-tab{
+    /* background-color: transparent; */
+    background-color: #FAACA8;
+    background-image: linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
+
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    padding: 10px;
+}
+
+.tab-links, .credit-links{
+    margin-left: 10px;
+    margin-right: 10px;
     font-size: 14px;
 
     text-decoration: none;

@@ -160,13 +160,13 @@ function paddleCollision() {
     }
 
     // bottom-left of ball
-    else if(inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xPaddle + widthPaddle, yPaddle), 1, 1)){
+    else if(inRange(distance(posX - ballCornerDist, posY + ballCornerDist, xPaddle + widthPaddle, yPaddle), 2, 2)){
         vy = -1;
         vx = 1;
     }
 
     // bottom-right of ball
-    else if(inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xPaddle, yPaddle), 1, 1)) {
+    else if(inRange(distance(posX + ballCornerDist, posY + ballCornerDist, xPaddle, yPaddle), 2, 2)) {
         vy = -1;
         vx = -1;
     }
