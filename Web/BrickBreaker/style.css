@@ -1,5 +1,5 @@
 body{
-    background-image: url(pastel_background_01.jpg);
+    background-image: url(Images/pastel_background_01.jpg);
     background-position: 15% 10%;
 
     margin: 0;
@@ -9,7 +9,7 @@ body{
 .game-buttons{
     position: absolute;
     width: 100%;
-    top: 42px;
+    top: 45px;
     margin-top: 3px;
     margin-bottom: 20px;
 }
@@ -22,7 +22,7 @@ button{
 #container{
     background: #01fcc8;
     position: relative;
-    margin-top: 82px; 
+    margin-top: 85px; 
 }
 
 #game-counter{
@@ -68,4 +68,6 @@ button{
 
   }
   
- 
+ .screenshot {
+     height: 400px;
+ }

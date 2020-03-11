@@ -1,73 +1,106 @@
+// varibles to keep track of the interval id, velocity, and position of ball.
 var id, posX, posY, vx, vy;
 
+// Keep track of who many games have been lost or won in the current session.
 var gamesWon = 0, gamesLost = 0;
 
+// Set the point where the ball will jstart checkingfor collisions against
+// the bricks and paddle to be more effiecient and not always check.
 var maxBlockY, minPaddleY = 500;
 
+// List that will keep track of current visible bricks.
 var bricks;
 
+// User changeable speed that will control how fast the ball/game is.
+// Default is 5.
 var intervalSpeed = 5;
 
+// Constants to ensure rectangle length/height and number of rectangles
+// stays constant.
 const NumRects = 20;
-const RecWidth = 100, RecLength = 35;
+const RecWidth = 100, RecHeight = 35;
 
 function setup() {
+
+    // Referesh the bricks and make sure they are all visibile.
     bricks = getRects();
 
-    resetRects();
+    resetBricks();
     resetBall();
     
-    // Want this to run as long as page is loaded so I do not store the id.
+    // Set interval so that the slider to change game speed is responsive.
     setInterval(changeSpeed, 100);
 }
 
+// Function that will be called by the start button.
 function startGame() {
+
+    // Set the game speed to what user selected at start of each new game.
     intervalSpeed = parseFloat(document.getElementById("myRange").value);
 
+    // WIll only start the game if the previous game has been reset.
     if (id == null) {
         id = setInterval(gameActions, intervalSpeed);
     }
 }
 
+// Function that will be called to reset game/
 function resetGame() {
+
+    // Break and reset the interval if it is not reset yet.
+    // Makes sure multiple presses of button do not break the page.
     if(id != null) {
         clearInterval(id);
         id = null;
     }
 
+    // Call the setup function to formally reset game.
     setup();
 }
 
+// Function to reset the ball after every game.
 function resetBall() {
     var ball = document.getElementById("ball");
     var radius = parseFloat(ball.getAttribute("r"));
-    //console.log(radius);
 
     var bbox = document.getElementById("container").getBoundingClientRect();
     var widthBBox = parseFloat(bbox.width);
 
+    // Randomly set the X and Y of the ball somewhere in between paddle
+    // and bricks.
     posX = radius + Math.random() * (widthBBox - radius*2);
     posY = 300 + radius + Math.random() * (100 - radius);
     
     ball.setAttribute("cx", posX);
     ball.setAttribute("cy", posY);
 
+    // Randomly determine the initial x velocity of the ball 
+    // using a ternary statement.
     vx = Math.random() > .5 ? -1 : 1;
     vy = 1;
 }
 
-function resetRects() {
+
+// Function to reset the bricks.
+function resetBricks() {
+    
+    // Set the x and y of the original bricks.
     var origX = 50.5, origY = 50;
 
+    // Variables that will changed to determine the x and y of each brick.
     var curX = origX, curY = origY;
 
     var bbox = document.getElementById("container").getBoundingClientRect();
     var bboxWidth = parseFloat(bbox.width);
+
+    // Go through each bricks annd set its attributes.
     for(var i = 0; i < NumRects; i++) {
 
+        // If the current brick would go past the edge of the svg,
+        // go to a new line.
         if(curX + RecWidth + 15 >= bboxWidth) {
             curX = origX;
-            curY += RecLength + 15;
+            curY += RecHeight + 15;
         }
 
         curRect = rects[i];
@@ -75,17 +108,23 @@ function resetRects() {
         curRect.setAttribute("x", curX);
         curRect.setAttribute("y", curY);
         curRect.setAttribute("width", RecWidth);
-        curRect.setAttribute("height", RecLength);
+        curRect.setAttribute("height", RecHeight);
         curRect.setAttribute("fill", getRandomPastel());
         curRect.setAttribute("stroke", "black");
-        curRect.setAttribute("stroke-width", .5);
+        curRect.setAttribute("stroke-width", 1);
 
 
+        // Update the curX do that the space between each brick in row is even.
         curX += RecWidth + 33.33;
     }
-    biggestBlockY = curY + RecLength + 20;
+    
+    // Set the maximum y of the bricks plus a little extra so that collisions
+    // between bricks and the ball are not checked when absolutely no
+    // collisions will occur. 
+    biggestBlockY = curY + RecHeight + 20;
 }
 
+// Function that gets called eveytime the mouse is moved to move the paddle.
 function mousePosition(e) {
     var xMouse = parseFloat(e.clientX);
     
@@ -97,6 +136,7 @@ function mousePosition(e) {
     var rightBBox = parseFloat(bbox.right);
     var leftBBox = parseFloat(bbox.left);
 
+    // Set the paddle to be touching the right edge of the 
     if (xMouse + widthPaddle/2 >= rightBBox) {
         paddle.setAttribute("x", widthBBox - widthPaddle);
     }
@@ -124,11 +164,10 @@ function gameActions() {
 
     if(bricks.length == 0) {
         gamesWon++;
-        document.getElementById("games-won").innerHTML= ("You have won " + gamesWon + " game(s)!");
+        document.getElementById("games-won").innerHTML= ("You have won " + gamesWon + " game(s) :)");
 
         alert("You have won the game");
         clearInterval(id);
-        //id = null;
     }
     
 }
@@ -149,10 +188,8 @@ function paddleCollision() {
     var ballCornerDist = radius / Math.sqrt(2);
 
 
-    //console.log(xBall)
 
     // Check if ball bounces of top of paddle.
-    // TODO: should this not be yPadde + heightPaddle - .5
     if(posX >= xPaddle && posX <= xPaddle + widthPaddle && inRange(posY + radius, yPaddle, 1)) {
         vy = -1;
     }
@@ -185,7 +222,6 @@ function brickCollisions() {
     
     var ball = document.getElementById("ball");
     var radius = parseFloat(ball.getAttribute("r"));
-    //console.log(bricks.length);
 
     if(posY >= maxBlockY) return;
 
@@ -205,7 +241,6 @@ function brickCollisions() {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
             vy = 1;
-            //console.log("asdf")
             return;
         }
 
@@ -214,7 +249,6 @@ function brickCollisions() {
             curBrick.style.visibility = "hidden";
             bricks.splice(i, 1);
             vy = -1;
-            //console.log("asdf")
             return;
         }
 
@@ -283,12 +317,10 @@ function wallCollisions() {
 
     if (posX + radius  >= svgWidth) { 
         vx = -1;
-        //c.setAttribute("fill", getRandomPastel());
   
     }
     else if (radius >= posX){
         vx = 1;
-        //c.setAttribute("fill", getRandomPastel());
     }
 
     // If you hit the bottom wall, you lose the game. 
@@ -304,7 +336,6 @@ function wallCollisions() {
     }
     else if (radius >= posY){
         vy = 1;
-        //c.setAttribute("fill", getRandomPastel());
     }
 }
 
@@ -328,10 +359,6 @@ function getRandomPastel() {
     (25 + 70 * Math.random()) + '%,' + 
     (80 + 2 * Math.random()) + '%)'
 }
-
-// function getRandomColor() {
-//     return '#' + (Math.random().toString(16) + "000000").substring(2,8);
-// }
 
 function getRects() {
     rects = [];
